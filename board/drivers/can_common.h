@@ -19,8 +19,14 @@ bool can_loopback = false;
   extern can_ring can_##x; \
   can_ring can_##x = { .w_ptr = 0, .r_ptr = 0, .fifo_size = (size), .elems = (CANPacket_t *)&(elems_##x) };
 
+#ifdef STM32F4
+// Keep the current host packet format while fitting the F4's 128 KiB RAM.
+#define CAN_RX_BUFFER_SIZE 512U
+#define CAN_TX_BUFFER_SIZE 64U
+#else
 #define CAN_RX_BUFFER_SIZE 4096U
 #define CAN_TX_BUFFER_SIZE 416U
+#endif
 
 #ifdef STM32H7
 // ITCM RAM and DTCM RAM are the fastest for Cortex-M7 core access

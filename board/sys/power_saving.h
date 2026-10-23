@@ -55,6 +55,7 @@ void set_power_save_state(bool enable) {
 }
 
 static void enter_stop_mode(void) {
+  #ifdef STM32H7
   // the SPI CS interrupt shares an IRQ with the FDCAN3 RX wakeup line, and doesn't clear its pending bit
   NVIC_DisableIRQ(EXTI15_10_IRQn);
 
@@ -160,4 +161,12 @@ static void enter_stop_mode(void) {
   __WFI();
 
   NVIC_SystemReset();
+  #else
+  // F4 retains the original interrupt-driven idle policy. H7 stop-mode
+  // registers and wakeup wiring do not apply to the original comma 3.
+  print("Deep stop mode is unavailable on F4\n");
+  #ifdef ALLOW_DEBUG
+  stop_mode_requested = false;
+  #endif
+  #endif
 }

@@ -16,7 +16,11 @@
 
 #include "board/drivers/can_common.h"
 
+#ifdef STM32F4
+#include "board/drivers/bxcan.h"
+#else
 #include "board/drivers/fdcan.h"
+#endif
 
 #include "board/sys/power_saving.h"
 
@@ -270,7 +274,9 @@ int main(void) {
   led_set(LED_RED, true);
   led_set(LED_GREEN, true);
   adc_init(ADC1);
+  #ifdef STM32H7
   dts_init();
+  #endif
 
   // print hello
   print("\n\n\n************************ MAIN START ************************\n");

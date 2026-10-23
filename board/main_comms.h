@@ -33,7 +33,11 @@ static int get_health_pkt(void *dat) {
   health->safety_param_pkt = current_safety_param;
   health->alternative_experience_pkt = alternative_experience;
 
+  #ifdef STM32F4
+  health->spi_error_count_pkt = 0U;
+  #else
   health->spi_error_count_pkt = spi_error_count;
+  #endif
 
   health->fault_status_pkt = fault_status;
   health->faults_pkt = faults;
@@ -48,8 +52,12 @@ static int get_health_pkt(void *dat) {
 
   health->sound_output_level_pkt = sound_output_level;
 
+  #ifdef STM32F4
+  health->temperature_pkt = 0U;  // temperature telemetry unavailable on F4
+  #else
   float temperature_encoded = (CLAMP(dts_get_temperature(), -40.0f, 214.5f) + 40.0f) + 0.5f;
   health->temperature_pkt = (uint8_t)temperature_encoded;
+  #endif
 
   return sizeof(*health);
 }
