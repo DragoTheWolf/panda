@@ -5,6 +5,11 @@
 #define CLOCK_SOURCE_PERIOD_MS           50U
 #define CLOCK_SOURCE_PULSE_LEN_MS        2U
 
+#ifdef STM32F4
+// Original C3/DOS routes both complementary camera strobes through TIM1.
+#include "board/stm32f4/clock_source.h"
+#else
+
 void clock_source_set_timer_params(uint16_t param1, uint16_t param2) {
   // Pulse length of each channel
   register_set(&(TIM1->CCR1), (((param1 & 0xFF00U) >> 8U)*10U), 0xFFFFU);
@@ -66,3 +71,4 @@ void clock_source_init(bool enable_channel1) {
   register_set(&(TIM1->CR1), TIM_CR1_CEN, 0x3FU);
   register_set(&(TIM8->CR1), TIM_CR1_CEN, 0x3FU);
 }
+#endif
